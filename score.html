@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>TENSION: Adventure</title>
+    <link href="css/bulma/bulma.min.css" rel="stylesheet">
+    <link href="css/tenner.css" rel="stylesheet">
+    <link href="css/fonts.css" rel="stylesheet">
+
+    <style>
+        #Game {
+            justify-content: flex-start;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a href="index.html" class="navbar-item">
+            <img src="imgs/Logo_64.png" style="height:40px;" alt="logo" /> <div style="margin-left:5px; font-size:120%; font-weight:100; text-shadow: 2px 2px #000;"><span style="font-weight: 600;">TEN</span>SION: Adventure</div>
+        </a>
+
+        <a role="button" class="navbar-burger is-primary game-menu" aria-label="menu" aria-expanded="false" data-target="menu">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="menu" class="navbar-menu">
+        <div class="navbar-end">
+            <a class="navbar-item" href="index.html">
+                <img src="imgs/icons/undo.svg" width="16" style="margin-right:.5rem;"> Go back
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="HighScoreContainer" style="color:#999;">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/EExt.min.js"></script>
+<script src="js/EHelpers.min.js"></script>
+<script src="js/ESettings.min.js"></script>
+<script src="js/EScore.min.js"></script>
+<script src="js/EBulma.min.js"></script>
+
+</body>
+</html>

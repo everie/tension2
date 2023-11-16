@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>TENSION: Adventure</title>
+    <link rel="icon" type="image/png" href="imgs/Logo_64.png" />
+    <link href="css/bulma/bulma.min.css" rel="stylesheet">
+    <link href="css/tenner.css" rel="stylesheet">
+    <link href="css/fonts.css" rel="stylesheet">
+
+    <script src="js/async.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a href="index.html" class="navbar-item">
+            <img src="imgs/Logo_64.png" style="height:40px;" alt="logo" /> <div style="margin-left:5px; font-size:120%; font-weight:100; text-shadow: 2px 2px #000;"><span style="font-weight: 600;">TEN</span>SION: Adventure</div>
+        </a>
+
+        <a role="button" class="navbar-burger is-primary game-menu" aria-label="menu" aria-expanded="false" data-target="menu">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div id="menu" class="navbar-menu">
+        <div class="navbar-end">
+            <a class="navbar-item" href="score.html">
+                <img src="imgs/icons/star.svg" width="16" style="margin-right:.5rem;"> Scores
+            </a>
+            <a class="navbar-item" href="howto.html">
+                <img src="imgs/icons/heart.svg" width="16" style="margin-right:.5rem;"> How to
+            </a>
+            <a class="navbar-item ResetGame">
+                <img src="imgs/icons/undo.svg" width="16" style="margin-right:.5rem;"> Reset
+            </a>
+        </div>
+    </div>
+</nav>
+
+<div id="BackGround"></div>
+<div id="BackGroundOverlay">
+    <div id="BGOverlayTop"></div>
+    <div id="BGOverlayBottom"></div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div id="Progress">
+                <div id="GameProgress">
+                    <div id="GameScore" style="flex-grow:0.5;">
+                        <span><img src="imgs/icons/star.svg" alt="Score" width="16" /></span>
+                        <span id="Points">0</span>
+                    </div>
+                    <div id="GameLevel">
+                        <span><img src="imgs/icons/stair.svg" alt="Level" width="16" /></span>
+                        <span id="Level">0</span>
+                    </div>
+                    <div id="GameLife">
+                        <span><img src="imgs/icons/heart.svg" alt="Lives" width="16" /></span>
+                        <span id="Lives">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="Game">
+                <div id="GameContainer">
+                    <div id="InnerGameBackground">
+                        <!-- Buffer Overlay -->
+                    </div>
+                    <div id="InnerGame">
+                        <!-- GAME -->
+                    </div>
+                    <div id="InnerGameMessages">
+                        <!-- Messages -->
+                    </div>
+                    <div id="InnerGameBufferOverlay">
+                        <!-- Buffer Overlay -->
+                    </div>
+                    <div id="InnerGameOverlay">
+                        <!-- Overlay -->
+                        <div class="InnerGameOverlayMessage">
+                            <div style="font-weight: bold;">THE END</div>
+                            <div id="GamePositionContainer">Position: <span id="GamePosition">0</span></div>
+                            <div class="Clickable ResetGame">Reset</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div id="ProgressBottom">
+                <div id="GameProgressBottom">
+
+                    <div style="flex-grow:0.5;">
+                        <img src="imgs/icons/undo.svg" alt="Undo" width="16" />
+                        <span id="GameUndo" class="Clickable">
+                            Undo <span style="font-weight:100;">(<span id="GameUndoCount">0</span>)</span>
+                        </span>
+                    </div>
+                    <div id="GameMove">
+                        <span><img src="imgs/icons/step.svg" alt="Moves" width="16" /></span>
+                        <span id="Moves">0</span>
+                    </div>
+                    <div id="GameOptions">
+                        <span><img src="imgs/icons/bulb.svg" alt="Options" width="16" style="max-height:15px;" /></span>
+                        <span id="Options">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js/EExt.min.js"></script>
+<script src="js/EHelpers.min.js"></script>
+<script src="js/ESettings.min.js"></script>
+<script src="js/ETen.min.js"></script>
+<script src="js/EBulma.min.js"></script>
+</body>
+</html>
