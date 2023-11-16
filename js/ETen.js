@@ -622,7 +622,7 @@ function SetBonusBlock(Groups, Selected) {
     // FILTERING OUT BONUS BLOCKS
     Groups = Groups.map(a => {
         return a.filter(b => !b.Bonus);
-    });
+    }).filter(a => a.length > 0);
 
     if (Bonus > 1) {
         let G = Random(0, Groups.length - 1);
@@ -633,9 +633,10 @@ function SetBonusBlock(Groups, Selected) {
 
         let Block = Groups[G][B];
 
-        SetBonusOverlay(Block.Self, Bonus);
-
-        Block.Self.dataset.bonus = Bonus;
+        if (Block !== undefined && Block !== null) {
+            SetBonusOverlay(Block.Self, Bonus);
+            Block.Self.dataset.bonus = Bonus;
+        }
     }
 }
 
