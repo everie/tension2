@@ -362,8 +362,6 @@ function ReSize() {
 
     let Size = Math.round(WindowHeight > WindowWidth ? WindowWidth : WindowHeight * 0.7);
 
-    console.log(Size);
-
     let AvailableSize = Size;
     let MaxSize = 800;
     let GameSize = AvailableSize > MaxSize ? MaxSize : AvailableSize;
@@ -914,11 +912,7 @@ function CreateNewBackgroundBars() {
     let Bars = GetAllBackgroundPositions().filter(a => a.Y >= 0);
 
     Bars.forEach(a => {
-        console.log(a);
-
-        let Bar = null;
-
-        Bar = document.querySelector('.background-bar[data-pos="' + a.Y + '"]');
+        let Bar = document.querySelector('.background-bar[data-pos="' + a.Y + '"]');
 
         if (a.Pos > (window.screen.height - Current.BlockSize) && Bar !== null) {
             Bar.remove();
