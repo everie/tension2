@@ -9,8 +9,8 @@ const Defaults = {
     LocalHighScore: 'HIGH2',
     LocalLastState: 'LAST2',
     Scrolling: {
-        Speed: 320,
-        Easing: 'ease-out'
+        Speed: 280,
+        Easing: 'linear'
     }
 };
 
