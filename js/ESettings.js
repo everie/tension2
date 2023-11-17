@@ -7,7 +7,11 @@ const Defaults = {
     NoRiseBuffer: 1,
     LocalGameData: 'GAME2',
     LocalHighScore: 'HIGH2',
-    LocalLastState: 'LAST2'
+    LocalLastState: 'LAST2',
+    Scrolling: {
+        Speed: 320,
+        Easing: 'ease-out'
+    }
 };
 
 const Current = {

@@ -178,8 +178,8 @@ function ScrollBackgroundAnimation(Bar, Amount, Callback) {
         { top: Y1 + 'px' },
         { top: Y2 + 'px' },
         {
-            duration: 280 * Amount,
-            easing: 'linear',
+            duration: Defaults.Scrolling.Speed * Amount,
+            easing: Defaults.Scrolling.Easing,
             fill: 'forwards'
         },
         Callback
@@ -797,12 +797,14 @@ function FillEmptySquares2(callback) {
             Empty: a.length === Defaults.Size
         };
     }).filter(a => a.Empty);
+
+    // TAKE A ROW
+    if (Rows.length > 1)
+        Rows.pop();
+
     let Levels = Rows.length;
 
     if (Levels > 0) {
-        if (Levels > 1)
-            Levels--;
-
         DisplayNoRiseBuffer(true);
         CreateNewRows(Rows);
         MoveBackgroundUp(Levels);
@@ -836,9 +838,6 @@ function FillEmptySquares2(callback) {
 
 function CreateNewRows(Rows) {
     const Inner = document.querySelector('#InnerGame');
-
-    if (Rows.length > 1)
-        Rows.pop();
 
     Rows.forEach(Row => {
 
@@ -1401,8 +1400,8 @@ function RiseBlockAnimation(Block, Amount, Callback) {
         FROM,
         TO,
         {
-            duration: 280 * Amount,
-            easing: 'linear',
+            duration: Defaults.Scrolling.Speed * Amount,
+            easing: Defaults.Scrolling.Easing,
             fill: 'forwards'
         },
         Callback
