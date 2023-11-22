@@ -39,6 +39,13 @@ Array.prototype.First = function() {
     return this[0];
 }
 
+Array.prototype.Last = function() {
+    if (this.length < 1)
+        return null;
+
+    return this[this.length - 1];
+}
+
 const Emit = function(Name) {
     window.dispatchEvent(new Event(Name));
 }

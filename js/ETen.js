@@ -816,8 +816,8 @@ function FillEmptySquares2(callback) {
     if (Levels > 0) {
         DisplayNoRiseBuffer(true);
         CreateNewRows(Rows);
-        MoveBackgroundUp(Levels);
 
+        MoveBackgroundUp(Levels);
         MoveAllBlocksUp(Levels, function() {
             callback(Levels);
         });
@@ -887,6 +887,9 @@ function MoveAllBlocksUp(Amount, Callback) {
 
 function MoveBackgroundUp(Amount, Callback) {
     let Bars = document.querySelectorAll('.background-bar');
+
+    // console.log('positions', GetAllBackgroundPositions(true))
+    // console.log('bars', Bars);
 
     async.each(Bars, function(Bar, Next) {
         ScrollBackgroundAnimation(Bar, Amount, Next);
@@ -1135,16 +1138,31 @@ function IncreaseHighest(Num, Callback) {
 
 function DisplayNewHigh(Callback) {
     let Bars = GetAllBackgroundPositions(true).reverse();
+    let Last = Bars.Last();
 
     async.eachSeries(Bars, function(Bar, Next) {
         Bar.Num++;
 
         let Div = document.querySelector('.background-bar[data-pos="' + Bar.Y + '"]');
-
         if (Div !== null) {
-            AnimateBackgroundIncrease(Bar, Div, Next);
+            AnimateBackgroundIncrease(Bar, Div, function() {
+                if (Last.Y === Bar.Y)
+                    Next();
+            });
+
+            setTimeout(function() {
+                if (Last.Y !== Bar.Y)
+                    Next();
+            }, 80);
         } else {
-            Next();
+            if (Last.Y === Bar.Y) {
+                // HAS TO BE SAME MS AS AnimateBackgroundIncrease() - otherwise race condition
+                setTimeout(function() {
+                    Next();
+                }, 160);
+            } else {
+                Next();
+            }
         }
 
     }, function(err) {
@@ -1170,7 +1188,7 @@ function AnimateBackgroundIncrease(Bar, Block, Callback) {
     }, {
         left: Width + 'px'
     }, {
-        duration: 140,
+        duration: 160,
         easing: 'linear',
         fill: 'forwards'
     }, function() {
@@ -1182,7 +1200,7 @@ function AnimateBackgroundIncrease(Bar, Block, Callback) {
     }, {
         left: 0
     }, {
-        duration: 140,
+        duration: 160,
         easing: 'linear',
         fill: 'forwards'
     }, Callback);
