@@ -1,3 +1,8 @@
+/*
+TENSION 2 - By Hans Elley
+Score screen
+ */
+
 const Params = new URLSearchParams(window.location.search);
 const ParamID = Params.get('id');
 

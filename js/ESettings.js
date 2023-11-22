@@ -1,3 +1,8 @@
+/*
+TENSION 2 - By Hans Elley
+Settings
+ */
+
 const Defaults = {
     Size: 5,
     Start: 3,

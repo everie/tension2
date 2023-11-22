@@ -1,3 +1,7 @@
+/*
+TENSION 2 - By Hans Elley
+Bulma code
+ */
 
 document.addEventListener('DOMContentLoaded', () => {
 

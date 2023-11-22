@@ -1,3 +1,8 @@
+/*
+TENSION 2 - By Hans Elley
+Helper functions
+ */
+
 // GROUP BY Y
 function GroupByY(arr) {
     return arr.reduce((group, e) => {

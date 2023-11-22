@@ -1,3 +1,8 @@
+/*
+TENSION 2 - By Hans Elley
+Game code
+ */
+
 (function () {
     Current.High = Defaults.Start;
     Current.RealHigh = Defaults.Start - 1;

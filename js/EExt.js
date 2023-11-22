@@ -1,3 +1,8 @@
+/*
+TENSION 2 - By Hans Elley
+Extensions
+ */
+
 HTMLElement.prototype.Animate = function(From, To, Settings, Callback) {
     let e = this;
 
