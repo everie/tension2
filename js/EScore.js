@@ -169,12 +169,14 @@ function ScoreSingle(Container, Score) {
 function ScoreListRow(...args) {
     let Row = document.createElement('div');
 
-    SetStyle(Row, {
-        display: 'flex',
-        width: '100%',
-        justifyContent: 'space-evenly',
-        flexDirection: 'row'
-    });
+    Row.classList.add('score-list-row');
+
+    // SetStyle(Row, {
+    //     display: 'flex',
+    //     width: '100%',
+    //     justifyContent: 'space-evenly',
+    //     flexDirection: 'row'
+    // });
 
     args.forEach(a => {
        let Col = document.createElement('div');

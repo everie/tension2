@@ -1,5 +1,6 @@
 (function () {
     Current.High = Defaults.Start;
+    Current.RealHigh = Defaults.Start - 1;
     Current.Lives = Defaults.MaxLives;
     Current.NoRise = 0;
     Current.Blocks = [];
@@ -48,6 +49,7 @@ function ResetGame() {
     localStorage.setItem(Defaults.LocalGameData, '');
 
     Current['High'] = Defaults.Start;
+    Current['RealHigh'] = Defaults.Start - 1;
     Current['Blocks'] = [];
     Current['Selected'] = [];
     Current['Background'] = [];
@@ -125,26 +127,24 @@ function SetUpBackground() {
 
 
     } else {
-        CreateNewBackgroundBars();
+        CreateNewBackgroundBars(true);
     }
 }
 
-function CreateBackgroundBar(Bar) {
+function CreateBackgroundBar(Bar, First = false) {
     let div = document.createElement('div');
 
     //let Even = true;
     let Num = 0;
 
-    if (Bar.Num !== undefined && Bar.Num !== null) {
-        Num = Bar.Num;
-        //Even = Bar.Y % 2 === 0;
+    if (First) {
+        Num = 1;
     } else {
-        // if (Prev !== undefined && Prev !== null) {
-        //     Even = Prev.dataset.isEven != 'true';
-        // }
-
-        Num = Current.High - 2;
-        //Num = Even ? Current.High - 2 : Current.High - 1;
+        if (Bar.Num !== undefined && Bar.Num !== null) {
+            Num = Bar.Num;
+        } else {
+            Num = Current.RealHigh;
+        }
     }
 
     div.className = 'background-bar';
@@ -416,7 +416,7 @@ function ResizeBackground() {
     });
 }
 
-function GetAllBackgroundPositions() {
+function GetAllBackgroundPositions(WithNum = false) {
     let Inner = document.querySelector('#InnerGame');
     let IP = Inner.getBoundingClientRect();
 
@@ -454,6 +454,15 @@ function GetAllBackgroundPositions() {
             Pos: Pos
         });
     }
+
+    if (WithNum)
+        Bars.map(a => {
+            let B = Current.Background.filter(b => a.Y === b.Y).First();
+            if (B !== null)
+                a['Num'] = B.Num
+
+            return a;
+        });
 
     return SortByKey(Bars, 'Y', true);
 }
@@ -571,7 +580,7 @@ function RemoveAllFriends(element, callback) {
                             let Opt = CalculateBlockGroups();
                             Options = Opt.Options;
 
-                            if (Opt.Options > 0)
+                            if (Options > 0)
                                 SetBonusBlock(Opt.Groups, SelectedBlocks);
 
                             UpdateOptions(Options);
@@ -905,10 +914,11 @@ function ClearOldBackgroundBars() {
     });
 }
 
-function CreateNewBackgroundBars() {
+function CreateNewBackgroundBars(First = false) {
     let Container = document.querySelector('#BackGround');
 
     let Bars = GetAllBackgroundPositions().filter(a => a.Y >= 0);
+    //let First = First;
 
     Bars.forEach(a => {
         let Bar = document.querySelector('.background-bar[data-pos="' + a.Y + '"]');
@@ -919,11 +929,14 @@ function CreateNewBackgroundBars() {
         }
 
         if (Bar === null) {
-            let Div = CreateBackgroundBar(a);
+            let Div = CreateBackgroundBar(a, First);
 
             Container.appendChild(Div.Element);
+            First = false;
         }
     });
+
+    StoreCurrentBackground();
 }
 
 function DetectDeadSquares() {
@@ -1093,11 +1106,7 @@ function CreateNewBlock(source, callback) {
     let x = source.dataset.x - 1;
     let y = source.dataset.y - 1;
     let num = parseInt(source.dataset.num);
-
     num++;
-
-    if (num > Current.High)
-        Current.High = num;
 
     let div = CreateGameSquare(x, y, num);
 
@@ -1106,7 +1115,77 @@ function CreateNewBlock(source, callback) {
 
     div.style.opacity = '0';
 
-    SpawnBlockAnimation(div, callback);
+    SpawnBlockAnimation(div, function() {
+        IncreaseHighest(num, callback);
+    });
+}
+
+function IncreaseHighest(Num, Callback) {
+    if (Num > Current.High) {
+        Current.High = Num;
+    }
+
+    if (Num > Current.RealHigh) {
+        Current.RealHigh = Num;
+        DisplayNewHigh(Callback);
+    } else {
+        Callback();
+    }
+}
+
+function DisplayNewHigh(Callback) {
+    let Bars = GetAllBackgroundPositions(true).reverse();
+
+    async.eachSeries(Bars, function(Bar, Next) {
+        Bar.Num++;
+
+        let Div = document.querySelector('.background-bar[data-pos="' + Bar.Y + '"]');
+
+        if (Div !== null) {
+            AnimateBackgroundIncrease(Bar, Div, Next);
+        } else {
+            Next();
+        }
+
+    }, function(err) {
+        if (err)
+            console.log(err);
+
+        Callback();
+    });
+}
+
+function AnimateBackgroundIncrease(Bar, Block, Callback) {
+    let Container = document.querySelector('#BackGround');
+
+    let Width = window.screen.width;
+    let Copy = CreateBackgroundBar(Bar, false);
+    let Element = Copy.Element;
+
+    Element.style.left = -Width + 'px';
+    Container.appendChild(Element);
+
+    Block.Animate({
+        left: 0
+    }, {
+        left: Width + 'px'
+    }, {
+        duration: 140,
+        easing: 'linear',
+        fill: 'forwards'
+    }, function() {
+        Block.remove();
+    });
+
+    Element.Animate({
+        left: -Width + 'px'
+    }, {
+        left: 0
+    }, {
+        duration: 140,
+        easing: 'linear',
+        fill: 'forwards'
+    }, Callback);
 }
 
 function SelectDeselect(arr, on, callback) {

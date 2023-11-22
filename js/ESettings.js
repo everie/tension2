@@ -16,6 +16,7 @@ const Defaults = {
 
 const Current = {
     High: 0,
+    RealHigh: 0,
     Move: 0,
     Score: 0,
     Level: 0,
@@ -210,6 +211,7 @@ function BonusChoice(Pct) {
 function GetCurrentState() {
     let Obj = {
         High: Current.High,
+        RealHigh: Current.RealHigh,
         Move: Current.Move,
         Score: Current.Score,
         Blocks: Current.BlocksAsObj(),
@@ -242,6 +244,7 @@ function LoadLastState(Key = Defaults.LocalGameData) {
 
     if (Game !== null) {
         Current.High = Game.High;
+        Current.RealHigh = Game.RealHigh;
         Current.Move = Game.Move;
         Current.Score = Game.Score;
         Current.Merges = Game.Merges;
