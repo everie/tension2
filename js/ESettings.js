@@ -8,7 +8,7 @@ const Defaults = {
     Start: 3,
     UndoMax: 3,
     UndoIncrease: 30,
-    MaxLives: 100,
+    MaxLives: 10,
     NoRiseBuffer: 1,
     LocalGameData: 'GAME2',
     LocalHighScore: 'HIGH2',

@@ -51,6 +51,15 @@ Array.prototype.Last = function() {
     return this[this.length - 1];
 }
 
+HTMLElement.prototype.Style = function(Style) {
+    Object.keys(Style).forEach(a => {
+        this['style'][a] = Style[a];
+    });
+
+    return this;
+}
+
+
 const Emit = function(Name) {
     window.dispatchEvent(new Event(Name));
 }

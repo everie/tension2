@@ -382,6 +382,14 @@ a:hover, .Clickable:hover, a.navbar-item:hover {
     opacity:0.3;
 }
 
+.inner-background-bar {
+    width:100%;
+    height:100%;
+    position:absolute;
+    left:0;
+    top:0;
+}
+
 #BackGroundOverlay {
     position:absolute;
     top:0;

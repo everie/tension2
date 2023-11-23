@@ -138,8 +138,6 @@ function SetUpBackground() {
 
 function CreateBackgroundBar(Bar, First = false) {
     let div = document.createElement('div');
-
-    //let Even = true;
     let Num = 0;
 
     if (First) {
@@ -156,15 +154,25 @@ function CreateBackgroundBar(Bar, First = false) {
     div.style.height = Current.BlockSize + 'px';
     div.style.top = Bar.Pos + 'px';
     div.dataset.pos = Bar.Y;
-    //div.dataset.isEven = Even;
     div.dataset.num = Num;
 
-    div.style.background = 'linear-gradient(0deg, ' + GetNumColour2(Num) + ' 50%, ' + GetNumColour(Num) + ' 50%)';
+    let inner = CreateInnerBackgroundBar(Num);
+    div.appendChild(inner);
 
     return {
         Element: div,
         Y: Bar.Y
     };
+}
+
+function CreateInnerBackgroundBar(Num) {
+    let inner = document.createElement('div');
+    inner.className = 'inner-background-bar';
+
+    //inner.style.background = 'linear-gradient(0deg, ' + GetNumColour2(Num) + ' 50%, ' + GetNumColour3(Num) + ' 50%, ' + GetNumColour(Num) + ' 75%)';
+    inner.style.background = 'linear-gradient(0deg, ' + GetNumColour2(Num) + ' 50%, ' + GetNumColour(Num) + ' 50%)';
+
+    return inner;
 }
 
 function ScrollBackgroundAnimation(Bar, Amount, Callback) {
@@ -219,7 +227,7 @@ function GameUndoMove() {
             UpdateScore();
             UpdateLives();
             UpdateLevel();
-            StoreCurrentState();
+            StoreCurrentState(false);
             ClearLastState();
             SetUpBackground();
             UpdateUndo();
@@ -276,7 +284,8 @@ function Populate() {
         }
     }
 
-    CalculateOptions(false);
+    CalculateOptions();
+    CheckLives();
 }
 
 function PopulateLoaded(LastBlocks) {
@@ -290,7 +299,8 @@ function PopulateLoaded(LastBlocks) {
         Inner.appendChild(div);
     });
 
-    CalculateOptions(false);
+    CalculateOptions();
+    CheckLives();
 }
 
 function CreateGameSquare(x, y, num, b = null) {
@@ -462,9 +472,10 @@ function GetAllBackgroundPositions(WithNum = false) {
 
     if (WithNum)
         Bars.map(a => {
-            let B = Current.Background.filter(b => a.Y === b.Y).First();
-            if (B !== null)
-                a['Num'] = B.Num
+            let Div = document.querySelector('.background-bar[data-pos="' + a.Y + '"]');
+            
+            if (Div !== null)
+                a['Num'] = parseInt(Div.dataset.num);
 
             return a;
         });
@@ -542,6 +553,7 @@ function GetAllFriends(element) {
 
 function RemoveAllFriends(element, callback) {
     Current.Busy = true;
+    let High = Current.RealHigh;
     let Bonus = (element.dataset.bonus ? parseInt(element.dataset.bonus) : 1);
 
     //ClearBonusBlock();
@@ -590,13 +602,21 @@ function RemoveAllFriends(element, callback) {
 
                             UpdateOptions(Options);
 
-                            StoreCurrentBackground();
-                            StoreCurrentState();
-
                             if (Current.Lives < 1) {
+                                StoreCurrentStateAndBackground();
                                 Next(true, Opt.Options);
                             } else {
-                                Next(null, Opt.Options);
+                                if (High < Current.RealHigh) {
+                                    DisplayNewHigh(function() {
+                                        ClearOldBackgroundBarsAndCreateNew();
+                                        StoreCurrentStateAndBackground();
+                                        Next(null, Opt.Options);
+                                    });
+                                } else {
+                                    ClearOldBackgroundBarsAndCreateNew();
+                                    StoreCurrentStateAndBackground();
+                                    Next(null, Opt.Options);
+                                }
                             }
                         });
 
@@ -616,15 +636,15 @@ function RemoveAllFriends(element, callback) {
     }
 }
 
-function StoreCurrentBackground() {
-    Current.Background = GetAllBackgroundPositions().map(a => {
-        let e = document.querySelector('.background-bar[data-pos="' + a.Y + '"]');
-
+function StoreCurrentStateAndBackground() {
+    Current.Background = GetAllBackgroundPositions(true).map(a => {
         return {
             Y: a.Y,
-            Num: e === null ? null : parseInt(e.dataset.num)
+            Num: a.Num ? a.Num : null
         };
-    })
+    });
+
+    StoreCurrentState();
 }
 
 function SetBonusBlock(Groups, Selected) {
@@ -734,6 +754,12 @@ function UpdateOptions(Options) {
     Div.innerHTML = FormatNumber(Options);
 }
 
+function CheckLives() {
+    if (Current.Lives < 1) {
+        EndGame(false);
+    }
+}
+
 function UpdateLives(Lives = 0) {
     let Div = document.querySelector('#Lives');
 
@@ -745,16 +771,13 @@ function UpdateLives(Lives = 0) {
     ScoreCountUpAnimation(Div, OldLives, Current.Lives);
 }
 
-function CalculateOptions(Update = true) {
+function CalculateOptions() {
     let Opts = document.querySelector('#Options');
 
     let Opt = CalculateBlockGroups();
 
     Current.Options = Opt.Options;
     Opts.innerHTML = FormatNumber(Opt.Options);
-
-    if (Opt.Options < 1 && !Update)
-        EndGame(Update);
 }
 
 function CalculateBlockGroups() {
@@ -893,24 +916,19 @@ function MoveAllBlocksUp(Amount, Callback) {
 function MoveBackgroundUp(Amount, Callback) {
     let Bars = document.querySelectorAll('.background-bar');
 
-    // console.log('positions', GetAllBackgroundPositions(true))
-    // console.log('bars', Bars);
-
     async.each(Bars, function(Bar, Next) {
-        ScrollBackgroundAnimation(Bar, Amount, Next);
+        if (Bar !== null)
+            ScrollBackgroundAnimation(Bar, Amount, Next);
     }, function(err) {
         if (err)
             console.log(err);
-
-        ClearOldBackgroundBars();
-        CreateNewBackgroundBars();
 
         if (Callback)
             Callback();
     });
 }
 
-function ClearOldBackgroundBars() {
+function ClearOldBackgroundBarsAndCreateNew() {
     let Bars = document.querySelectorAll('.background-bar');
     let Top = -Current.BlockSize;
 
@@ -920,13 +938,13 @@ function ClearOldBackgroundBars() {
        if (B.top < Top)
            Bar.remove();
     });
+
+    CreateNewBackgroundBars();
 }
 
 function CreateNewBackgroundBars(First = false) {
     let Container = document.querySelector('#BackGround');
-
     let Bars = GetAllBackgroundPositions().filter(a => a.Y >= 0);
-    //let First = First;
 
     Bars.forEach(a => {
         let Bar = document.querySelector('.background-bar[data-pos="' + a.Y + '"]');
@@ -943,8 +961,6 @@ function CreateNewBackgroundBars(First = false) {
             First = false;
         }
     });
-
-    StoreCurrentBackground();
 }
 
 function DetectDeadSquares() {
@@ -961,7 +977,6 @@ function DetectDeadSquares() {
     UpdateLives(Lives);
 
     Blocks.forEach(a => {
-
         ShowLifeAnimation(a.Element, a.Num);
 
         Current.Blocks = Current.Blocks.filter(block => block.dataset.id !== a.ID);
@@ -1135,80 +1150,77 @@ function IncreaseHighest(Num, Callback) {
 
     if (Num > Current.RealHigh) {
         Current.RealHigh = Num;
-        DisplayNewHigh(Callback);
+
+        Callback();
     } else {
         Callback();
     }
 }
 
 function DisplayNewHigh(Callback) {
-    let Bars = GetAllBackgroundPositions(true).reverse();
+    let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null).reverse();
     let Last = Bars.Last();
 
     async.eachSeries(Bars, function(Bar, Next) {
-        Bar.Num++;
-
-        let Div = document.querySelector('.background-bar[data-pos="' + Bar.Y + '"]');
-        if (Div !== null) {
-            AnimateBackgroundIncrease(Bar, Div, function() {
-                if (Last.Y === Bar.Y)
-                    Next();
-            });
-
-            setTimeout(function() {
-                if (Last.Y !== Bar.Y)
-                    Next();
-            }, 80);
-        } else {
-            if (Last.Y === Bar.Y) {
-                // HAS TO BE SAME MS AS AnimateBackgroundIncrease() - otherwise race condition
-                setTimeout(function() {
-                    Next();
-                }, 160);
-            } else {
+        AnimateBackgroundIncrease(Bar, function() {
+            if (Bar.Y === Last.Y) {
                 Next();
             }
+        });
+
+        if (Bar.Y !== Last.Y) {
+            setTimeout(function() {
+                Next();
+            }, 80);
         }
 
     }, function(err) {
         if (err)
             console.log(err);
 
-        Callback();
+        if (Callback)
+            Callback();
     });
 }
 
-function AnimateBackgroundIncrease(Bar, Block, Callback) {
-    let Container = document.querySelector('#BackGround');
+function AnimateBackgroundIncrease(Bar, Callback) {
+    let Div = document.querySelector('.background-bar[data-pos="' + Bar.Y + '"]');
+    Bar.Num++;
 
-    let Width = window.screen.width;
-    let Copy = CreateBackgroundBar(Bar, false);
-    let Element = Copy.Element;
+    if (Div !== null) {
+        Div.dataset.num = Bar.Num;
+        let Old = Div.querySelector('.inner-background-bar');
 
-    Element.style.left = -Width + 'px';
-    Container.appendChild(Element);
+        Old.Style({
+            left: 'auto',
+            right: 0
+        });
 
-    Block.Animate({
-        left: 0
-    }, {
-        left: Width + 'px'
-    }, {
-        duration: 160,
-        easing: 'linear',
-        fill: 'forwards'
-    }, function() {
-        Block.remove();
-    });
+        let New = CreateInnerBackgroundBar(Bar.Num);
+        Div.appendChild(New);
 
-    Element.Animate({
-        left: -Width + 'px'
-    }, {
-        left: 0
-    }, {
-        duration: 160,
-        easing: 'linear',
-        fill: 'forwards'
-    }, Callback);
+        Old.Animate({
+            width: '100%'
+        }, {
+            width: '0%'
+        }, {
+            duration: 160,
+            easing: 'ease-in-out',
+            fill: 'forwards'
+        }, function() {
+            Old.remove();
+        });
+
+        New.Animate({
+            width: '0%'
+        }, {
+            width: '100%'
+        }, {
+            duration: 160,
+            easing: 'ease-in-out',
+            fill: 'forwards'
+        }, Callback);
+    }
 }
 
 function SelectDeselect(arr, on, callback) {
