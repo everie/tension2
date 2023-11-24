@@ -583,49 +583,44 @@ function RemoveAllFriends(element, callback) {
             CreateNewBlock(element, function() {
                 // FIND GAPS
                 let Gaps = FindGaps(Current.Empties);
-
                 // FIND BLOCKS ON TOP
                 let Stacks = FindStacked(Gaps);
 
                 FillGapsSynced(Stacks, function() {
 
-                    let Options = 0;
-                    async.whilst(cb => { cb(null, Options < 1) }, Next => {
+                    DisplayNewHigh(High,function() {
+                        let Options = 0;
+                        async.whilst(cb => { cb(null, Options < 1) }, Next => {
 
-                        FillEmptySquares2(function(Levels) {
-                            UpdateLevel(Levels);
-                            let Opt = CalculateBlockGroups();
-                            Options = Opt.Options;
+                            FillEmptySquares2(function(Levels) {
+                                UpdateLevel(Levels);
+                                let Opt = CalculateBlockGroups();
+                                Options = Opt.Options;
 
-                            if (Options > 0)
-                                SetBonusBlock(Opt.Groups, SelectedBlocks);
+                                if (Options > 0)
+                                    SetBonusBlock(Opt.Groups, SelectedBlocks);
 
-                            UpdateOptions(Options);
-
-                            if (Current.Lives < 1) {
+                                UpdateOptions(Options);
+                                ClearOldBackgroundBarsAndCreateNew();
                                 StoreCurrentStateAndBackground();
-                                Next(true, Opt.Options);
-                            } else {
-                                if (High < Current.RealHigh) {
-                                    DisplayNewHigh(function() {
-                                        ClearOldBackgroundBarsAndCreateNew();
-                                        StoreCurrentStateAndBackground();
-                                        Next(null, Opt.Options);
-                                    });
+
+                                if (Current.Lives < 1) {
+                                    Next(true, Opt.Options);
                                 } else {
-                                    ClearOldBackgroundBarsAndCreateNew();
-                                    StoreCurrentStateAndBackground();
                                     Next(null, Opt.Options);
                                 }
-                            }
+                            });
+
+                        }, (end, n) => {
+                            if (end)
+                                EndGame(true);
+
+                            callback();
                         });
 
-                    }, (end, n) => {
-                        if (end)
-                            EndGame(true);
-
-                        callback();
                     });
+
+
 
                 });
             });
@@ -1157,30 +1152,36 @@ function IncreaseHighest(Num, Callback) {
     }
 }
 
-function DisplayNewHigh(Callback) {
-    let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null).reverse();
-    let Last = Bars.Last();
+function DisplayNewHigh(High, Callback) {
+    if (High < Current.RealHigh) {
 
-    async.eachSeries(Bars, function(Bar, Next) {
-        AnimateBackgroundIncrease(Bar, function() {
-            if (Bar.Y === Last.Y) {
-                Next();
+        let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null).reverse();
+        let Last = Bars.Last();
+
+        async.eachSeries(Bars, function(Bar, Next) {
+            AnimateBackgroundIncrease(Bar, function() {
+                if (Bar.Y === Last.Y) {
+                    Next();
+                }
+            });
+
+            if (Bar.Y !== Last.Y) {
+                setTimeout(function() {
+                    Next();
+                }, 80);
             }
+
+        }, function(err) {
+            if (err)
+                console.log(err);
+
+            if (Callback)
+                Callback();
         });
 
-        if (Bar.Y !== Last.Y) {
-            setTimeout(function() {
-                Next();
-            }, 80);
-        }
-
-    }, function(err) {
-        if (err)
-            console.log(err);
-
-        if (Callback)
-            Callback();
-    });
+    } else {
+        Callback();
+    }
 }
 
 function AnimateBackgroundIncrease(Bar, Callback) {

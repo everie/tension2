@@ -73,6 +73,7 @@ function GetNumColour(num) {
         case 1: return '#3fff00';
         case 2: return '#0099ff';
         case 3: return '#ff7200';
+        case 3: return '#ff7200';
         case 4: return '#ff003b';
         case 5: return '#b71cff';
         case 6: return '#f9ff56';
