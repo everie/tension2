@@ -82,6 +82,12 @@ a, .Clickable, a.navbar-item, .navbar-item, .navbar-link {
     color:var(--link-colour);
 }
 
+.navbar-item {
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+}
+
 .Clickable.disabled {
     cursor: default;
     color:var(--link-disabled);
@@ -450,6 +456,15 @@ a:hover, .Clickable:hover, a.navbar-item:hover {
     flex-direction: row;
     padding:1px;
 }
+
+.AutoGame:not(.off), .AutoGame:hover, .AutoGame:active, .AutoGame:visited {
+    color:#0f0;
+}
+
+.AutoGame.off {
+    color:inherit;
+}
+
 
 /*
 @keyframes PulseX2 {

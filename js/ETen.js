@@ -10,9 +10,12 @@ Game code
     Current.NoRise = 0;
     Current.Blocks = [];
 
+    GetSettings();
+
     ReSize();
     SetUpReset();
     SetUpUndo();
+    SetUpAutoButton();
 
     let LastBlocks = LoadLastState();
 
@@ -78,39 +81,87 @@ function ResetGame() {
     UpdateLives();
     UpdateLevel();
     SetUpUndo();
+    SetUpAutoButton();
+
     SetUpBackground();
     DisplayNoRiseBuffer();
 }
 
 function SetUpAutoPlay() {
-    let EventHandler = () => {
-        if (Current.Auto) {
-            let Groups = CalculateBlockGroups().Groups;
+    Listen('MoveDone', AutoPlayEvent);
+    Listen('InitDone', AutoPlayEvent);
+}
 
-            if (Groups.length > 0) {
-                let G = Random(0, Groups.length - 1);
-                let B = Random(0, Groups[G].length - 1);
+function AutoPlayEvent() {
+    if (Current.Auto) {
+        let Groups = CalculateBlockGroups().Groups;
 
-                let Block = Groups[G][B];
+        if (Current.AutoTimer !== null)
+            clearTimeout(Current.AutoTimer);
 
-                Block.Self.click();
+        Current.AutoTimer = null;
 
-                setTimeout(function() {
+        ClearAllSelected();
+
+        if (Groups.length > 0) {
+            let G = Random(0, Groups.length - 1);
+            let B = Random(0, Groups[G].length - 1);
+
+            // console.log('row', Groups.length - 1, Groups, 'selected', G);
+            // console.log('blo', Groups[G].length - 1, Groups[G], 'selected', B);
+
+            let Block = Groups[G][B];
+            Block.Self.click();
+
+            Current.AutoTimer = setTimeout(function() {
+                if (Current.Auto)
                     Block.Self.click();
-                }, 400);
-            }
+            }, 400);
         }
-    };
+    }
+}
 
-    Listen('MoveDone', EventHandler);
-    Listen('InitDone', EventHandler);
+function SetUpAutoButton() {
+    let Button = document.querySelector('.AutoGame');
+    let OffClass = 'off';
+    InitAutoPlay(false);
+    Button.classList.add(OffClass);
+
+    Button.onclick = function() {
+        if (Button.classList.contains(OffClass)) {
+            Button.classList.remove(OffClass);
+            // TURN ON
+            InitAutoPlay(true);
+        } else {
+            Button.classList.add(OffClass);
+            // TURN OFF
+            InitAutoPlay(false);
+        }
+    }
 }
 
 function InitAutoPlay(Start = true) {
+    let Button = document.querySelector('.AutoGame');
+    let OffClass = 'off';
+
     Current.Auto = Start;
 
-    SetUpAutoPlay();
-    Emit('MoveDone');
+    if (!Start) {
+        Button.classList.add(OffClass);
+    } else {
+        SetUpAutoPlay();
+        Emit('MoveDone');
+    }
+}
+
+function ClearAllSelected() {
+    if (Current.HasSelect()) {
+        Current.Selected.forEach(a => {
+            a.Self.classList.remove('Selected');
+        });
+
+        Current.Selected = [];
+    }
 }
 
 function SetUpBackground() {
@@ -277,10 +328,12 @@ function Populate() {
 
     for (let y = 0; y < Defaults.Size; y++) {
         for (let x = 0; x < Defaults.Size; x++) {
-            let div = CreateGameSquare(x, y, SquareChoice());
+            if (Defaults.StartingLayout[y][x] === 1) {
+                let div = CreateGameSquare(x, y, SquareChoice());
 
-            Current.Blocks.push(div);
-            Inner.appendChild(div);
+                Current.Blocks.push(div);
+                Inner.appendChild(div);
+            }
         }
     }
 
@@ -607,11 +660,11 @@ function RemoveAllFriends(element, callback) {
                                 if (Current.Lives < 1) {
                                     Next(true, Opt.Options);
                                 } else {
-                                    Next(null, Opt.Options);
+                                    Next(null);
                                 }
                             });
 
-                        }, (end, n) => {
+                        }, (end) => {
                             if (end)
                                 EndGame(true);
 
@@ -802,21 +855,26 @@ function CalculateBlockGroups() {
 function EndGame(Update) {
     let End = document.querySelector('#InnerGameOverlay');
     let GamePos = document.querySelector('#GamePosition');
+    let GameLink = document.querySelector('#GameLink');
     let GamePosCont = document.querySelector('#GamePositionContainer');
     End.style.display = 'flex';
+    InitAutoPlay(false);
 
     if (Update) {
-        let Position = SaveLastStateOnEnd();
+        let LastState = SaveLastStateOnEnd();
 
-        if (Position < 1) {
+        if (LastState.Position < 1) {
             GamePos.innerHTML = "None";
         } else {
-            GamePos.innerHTML = Position;
+            GamePos.innerHTML = LastState.Position;
         }
+        GameLink.href = 'score.html?id=' + LastState.ID;
 
         GamePosCont.style.display = 'block';
+        GameLink.style.display = 'block';
     } else {
         GamePosCont.style.display = 'none';
+        GameLink.style.display = 'none';
     }
 }
 

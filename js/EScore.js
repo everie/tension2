@@ -10,6 +10,8 @@ const ParamID = Params.get('id');
     let Container = document.querySelector('#HighScoreContainer');
     let H = GetLocalItem(Defaults.LocalHighScore);
 
+    GetSettings();
+
     if (H == null) {
         Container.innerHTML = 'No scores registered yet. Go play!';
     } else {

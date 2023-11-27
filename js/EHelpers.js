@@ -50,8 +50,10 @@ function FormatNumber(x, round = true) {
     if (round)
         x = Math.round(x);
 
-    return x.toLocaleString('da');
-    
+    switch (GetSetting('NumberFormat')) {
+        case 'COMMAS': return x.toLocaleString('en-GB');
+        case 'DOTS': return x.toLocaleString('da');
+    }
     //return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ".");
 }
 
@@ -112,12 +114,27 @@ function GetReadableTimestamp(Time, Short = false) {
         return '<#NoTime>';
 
     let D = new Date(Time);
+    let S = GetDateSeparator(GetSetting('DateSeparator'));
 
     let Year = D.getFullYear();
     let Month = D.getMonth() + 1;
     let Day = D.getDate();
 
-    let d = Pad(Day) + '-' + Pad(Month) + '-' + Year;
+    let d = '';
+
+    switch (GetSetting('DateFormat')) {
+        case 'DDMMYYYY':
+            d = Pad(Day) + S + Pad(Month) + S + Year;
+            break;
+
+        case 'MMDDYYYY':
+            d = Pad(Month) + S + Pad(Day) + S + Year;
+            break;
+
+        case 'YYYYMMDD':
+            d = Year + S + Pad(Month) + S + Pad(Day);
+            break;
+    }
 
     if (Short)
         return d;
