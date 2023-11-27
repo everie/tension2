@@ -16,6 +16,9 @@ function FillForm() {
 
 
     DateFormat.forEach(a => {
+        if (a.value === Current.Settings.DateFormat)
+            a.checked = true;
+
         a.addEventListener('change', function( ) {
             let e = this;
             let val = e.value;
@@ -28,6 +31,9 @@ function FillForm() {
     });
 
     DateSeparator.forEach(a => {
+        if (a.value === Current.Settings.DateSeparator)
+            a.checked = true;
+
         a.addEventListener('change', function( ) {
             let e = this;
             let val = e.value;
@@ -40,6 +46,9 @@ function FillForm() {
     });
 
     NumberFormat.forEach(a => {
+        if (a.value === Current.Settings.NumberFormat)
+            a.checked = true;
+
         a.addEventListener('change', function( ) {
             let e = this;
             let val = e.value;
