@@ -3,6 +3,10 @@ TENSION 2 - By Hans Elley
 Helper functions
  */
 
+window.onresize = function() {
+    Emit('ReSize');
+};
+
 // GROUP BY Y
 function GroupByY(arr) {
     return arr.reduce((group, e) => {
@@ -185,4 +189,8 @@ function Shuffle(arr) {
         .map(value => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value);
+}
+
+function IsMobile() {
+    return window.screen.width < 1023 || navigator.userAgent.indexOf("Mobi") > -1;
 }

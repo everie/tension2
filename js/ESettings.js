@@ -81,11 +81,11 @@ const Current = {
         Options: {
             NumberFormat: [
                 {
-                    Text: 'Dots',
+                    Text: '1.234,5',
                     Value: 'DOTS'
                 },
                 {
-                    Text: 'Commas',
+                    Text: '1,234.5',
                     Value: 'COMMAS'
                 }
             ],
@@ -105,15 +105,15 @@ const Current = {
             ],
             DateSeparator: [
                 {
-                    Text: '-',
+                    Text: 'Dash (-)',
                     Value: 'DASH'
                 },
                 {
-                    Text: '/',
+                    Text: 'Slash (/)',
                     Value: 'SLASH'
                 },
                 {
-                    Text: '.',
+                    Text: 'Dot (.)',
                     Value: 'DOT'
                 }
             ]

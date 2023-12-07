@@ -47,10 +47,16 @@ body, html {
 
 .navbar, .navbar-menu {
     background-color: var(--nav-colour);
-    min-height: 3.5rem;
+    /*min-height: 3.5rem;*/
+    overflow-y:hidden;
+    padding:0;
 }
 
-.navbar-link:hover, a.navbar-item:hover, .navbar-item.has-dropdown .navbar-link:hover, .navbar-link:hover {
+#menu {
+    height:100%;
+}
+
+.navbar-link:hover, a.navbar-item:hover, .navbar-item.has-dropdown .navbar-link:hover, .navbar-link:hover, a.navbar-item:active, a.navbar-item:focus-within {
     background-color: transparent;
     color:var(--link-colour);
 }
@@ -86,6 +92,22 @@ a, .Clickable, a.navbar-item, .navbar-item, .navbar-link {
     display:flex;
     flex-direction: row;
     align-items: center;
+    padding:.7rem 1rem;
+    font-size:110%;
+}
+
+.nav-icon {
+    width:25px;
+    margin-right: .5rem;
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar-menu .navbar-item {
+    border:0 dashed rgba(255, 255, 255, 0.1);
+    border-top-width: 1px;
 }
 
 .Clickable.disabled {
@@ -465,6 +487,29 @@ a:hover, .Clickable:hover, a.navbar-item:hover {
     color:inherit;
 }
 
+
+.radio-label {
+    font-size:110%;
+    display:flex;
+    align-items: center;
+    margin-bottom: .2rem;
+    margin-top: .2rem;
+}
+
+.radio-title {
+    font-size:150%;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.7);
+}
+
+.radio-container {
+    margin-bottom: 1.5rem;
+}
+
+.radio-field {
+    height:1.4rem;
+    width:1.4rem;
+    margin-right:.5rem;
+}
 
 /*
 @keyframes PulseX2 {

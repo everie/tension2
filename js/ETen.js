@@ -33,11 +33,13 @@ Game code
     DisplayNoRiseBuffer();
 
     Emit('InitDone');
+
+    Listen('ReSize', function() {
+        ReSize();
+    });
 })();
 
-window.onresize = function() {
-    ReSize();
-};
+
 
 function SetUpReset() {
     let Resets = document.querySelectorAll('.ResetGame');
