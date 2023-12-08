@@ -873,13 +873,16 @@ function EndGame(Update) {
 
         if (LastState.Position < 1) {
             GamePos.innerHTML = "None";
+            GameLink.style.display = 'none';
         } else {
             GamePos.innerHTML = LastState.Position;
+
+            GameLink.href = 'score.html?id=' + LastState.ID;
+            GameLink.style.display = 'block';
         }
-        GameLink.href = 'score.html?id=' + LastState.ID;
 
         GamePosCont.style.display = 'block';
-        GameLink.style.display = 'block';
+
     } else {
         GamePosCont.style.display = 'none';
         GameLink.style.display = 'none';
