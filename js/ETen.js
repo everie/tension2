@@ -89,9 +89,14 @@ function ResetGame() {
     DisplayNoRiseBuffer();
 }
 
-function SetUpAutoPlay() {
-    Listen('MoveDone', AutoPlayEvent);
-    Listen('InitDone', AutoPlayEvent);
+function SetUpAutoPlay(On) {
+    if (On) {
+        Listen('MoveDone', AutoPlayEvent);
+        Listen('InitDone', AutoPlayEvent);
+    } else {
+        Unlisten('MoveDone', AutoPlayEvent);
+        Unlisten('InitDone', AutoPlayEvent);
+    }
 }
 
 function AutoPlayEvent() {
@@ -149,9 +154,10 @@ function InitAutoPlay(Start = true) {
     Current.Auto = Start;
 
     if (!Start) {
+        SetUpAutoPlay(false);
         Button.classList.add(OffClass);
     } else {
-        SetUpAutoPlay();
+        SetUpAutoPlay(true);
         Emit('MoveDone');
     }
 }
@@ -1215,7 +1221,7 @@ function IncreaseHighest(Num, Callback) {
 function DisplayNewHigh(High, Callback) {
     if (High < Current.RealHigh) {
 
-        let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null).reverse();
+        let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null && a.Y > 0).reverse();
         let Last = Bars.Last();
 
         async.eachSeries(Bars, function(Bar, Next) {

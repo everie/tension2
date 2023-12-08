@@ -68,6 +68,10 @@ const Listen = function(Name, Event) {
     window.addEventListener(Name, Event);
 }
 
+const Unlisten = function(Name, Event) {
+    window.removeEventListener(Name, Event);
+}
+
 const Events = {};
 
 HTMLElement.prototype.Emit = function(Name) {

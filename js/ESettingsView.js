@@ -1,3 +1,8 @@
+/*
+TENSION 2 - By Hans Elley
+Settings View
+ */
+
 (function () {
     GetSettings();
     CreateForm();

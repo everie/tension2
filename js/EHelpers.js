@@ -192,5 +192,5 @@ function Shuffle(arr) {
 }
 
 function IsMobile() {
-    return window.screen.width < 1023 || navigator.userAgent.indexOf("Mobi") > -1;
+    return window.screen.width < 1024 || navigator.userAgent.indexOf("Mobi") > -1;
 }
