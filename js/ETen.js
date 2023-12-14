@@ -1224,7 +1224,7 @@ function IncreaseHighest(Num, Callback) {
 function DisplayNewHigh(High, Callback) {
     if (High < Current.RealHigh) {
 
-        let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null && a.Y > 0).reverse();
+        let Bars = GetAllBackgroundPositions(true).filter(a => a.Num !== undefined && a.Num !== null && a.Y > -1).reverse();
         let Last = Bars.Last();
 
         async.eachSeries(Bars, function(Bar, Next) {
