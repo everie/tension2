@@ -74,6 +74,9 @@ const Current = {
             return Obj;
         })
     },
+    BlocksPlayable: function() {
+        return this.Blocks.filter(a => parseInt(a.dataset.num) < 10);
+    },
     Settings: {
         NumberFormat: 'DOTS', // ['DOTS', 'COMMAS']
         DateFormat: 'DDMMYYYY', // ['DDMMYYYY', 'MMDDYYYY', 'YYYYMMDD']
